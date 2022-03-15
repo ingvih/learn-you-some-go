@@ -5,4 +5,8 @@
         "titleBar.activeBackground": "#6610f2",
         "titleBar.inactiveBackground": "#6f42c1"
     },
+    "go.lintTool": "golangci-lint",
+    "go.lintFlags": [
+        "--fast"
+    ],
 }

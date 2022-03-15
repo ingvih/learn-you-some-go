@@ -9,4 +9,9 @@
     "go.lintFlags": [
         "--fast"
     ],
+    "go.testOnSave": true,
+    "go.formatTool": "goimports",
+    "gopls": {
+        "experimentalWorkspaceModule": true,
+    }
 }

@@ -1,29 +1,31 @@
 package main
 
 import (
-	"bytes"
+	"reflect"
 	"testing"
 )
 
 func TestCountdown(t *testing.T) {
-    buffer := &bytes.Buffer{}
-    observableSleeper := &ObservableSleeper{}
 
-    Countdown(buffer, observableSleeper)
+	t.Run("sleep before every print", func(t *testing.T) {
+		observableSleepPrinter := &ObservableCountdownOperations{}
+		Countdown(observableSleepPrinter, observableSleepPrinter)
 
-    got := buffer.String()
-    want := `3
-2
-1
-Go!`
+		want := []string{
+			sleep,
+			write,
+			sleep,
+			write,
+			sleep,
+			write,
+			sleep,
+			write,
+		}
 
-    if got != want {
-        t.Errorf("got %q want %q", got, want)
-    }
-
-    if observableSleeper.Calls != 4 {
-        t.Errorf("not enough calls to sleeper, want 4 got %d", observableSleeper.Calls)
-    }
+		if !reflect.DeepEqual(want, observableSleepPrinter.Calls) {
+			t.Errorf("wanted calls %v got %v", want, observableSleepPrinter.Calls)
+		}
+	})
 }
 
 type ObservableSleeper struct {
@@ -33,3 +35,19 @@ type ObservableSleeper struct {
 func (s *ObservableSleeper) Sleep() {
     s.Calls++
 }
+
+type ObservableCountdownOperations struct {
+    Calls []string
+}
+
+func (s *ObservableCountdownOperations) Sleep() {
+    s.Calls = append(s.Calls, sleep)
+}
+
+func (s *ObservableCountdownOperations) Write(p []byte) (n int, err error) {
+    s.Calls = append(s.Calls, write)
+    return
+}
+
+const write = "write"
+const sleep = "sleep"

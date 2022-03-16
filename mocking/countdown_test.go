@@ -1,39 +1,47 @@
 package main
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
 
 func TestCountdown(t *testing.T) {
 
-	t.Run("sleep before every print", func(t *testing.T) {
-		observableSleepPrinter := &ObservableCountdownOperations{}
-		Countdown(observableSleepPrinter, observableSleepPrinter)
+    t.Run("prints 3 to Go!", func(t *testing.T) {
+        buffer := &bytes.Buffer{}
+        Countdown(buffer, &ObservableCountdownOperations{})
 
-		want := []string{
-			sleep,
-			write,
-			sleep,
-			write,
-			sleep,
-			write,
-			sleep,
-			write,
-		}
+        got := buffer.String()
+        want := `3
+2
+1
+Go!`
 
-		if !reflect.DeepEqual(want, observableSleepPrinter.Calls) {
-			t.Errorf("wanted calls %v got %v", want, observableSleepPrinter.Calls)
-		}
-	})
-}
+        if got != want {
+            t.Errorf("got %q want %q", got, want)
+        }
+    })
 
-type ObservableSleeper struct {
-    Calls int
-}
+    t.Run("sleep before every print", func(t *testing.T) {
+        observableSleepPrinter := &ObservableCountdownOperations{}
+        Countdown(observableSleepPrinter, observableSleepPrinter)
 
-func (s *ObservableSleeper) Sleep() {
-    s.Calls++
+        want := []string{
+            sleep,
+            write,
+            sleep,
+            write,
+            sleep,
+            write,
+            sleep,
+            write,
+        }
+
+        if !reflect.DeepEqual(want, observableSleepPrinter.Calls) {
+            t.Errorf("wanted calls %v got %v", want, observableSleepPrinter.Calls)
+        }
+    })
 }
 
 type ObservableCountdownOperations struct {
